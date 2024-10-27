@@ -35,6 +35,7 @@ df[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
 df['price'] = df['price'].astype('float')
 df['year'] = df[DATE_COLUMN].dt.year
 
+st.subheader("Use this to generate the average median resale price, and an web analysis of the resale flat of your choice:")
 
 with st.form("Input Parameters"):
     town = st.selectbox(
@@ -60,6 +61,8 @@ with st.form("Input Parameters"):
 
 # Running the Crew
 if submitted or st.session_state.keep_graphics: 
-    #result = crew.kickoff(inputs={"topic": f"What is the average median resale price for {town}, {flat_type} flat in {year}?"})
+    avg_result = df.groupby(['year','town','flat_type'])['price'].mean().reset_index()
+    output = avg_result[(avg_result['town'] == town) & (avg_result['year'] == int(year)) & (avg_result['flat_type'] == flat_type)]
+    st.write(output)
     #st.markdown(result)
     st.session_state.keep_graphics = True
