@@ -8,7 +8,8 @@ st.subheader("Objectives")
 st.text("This app aims to allow users to make informed purchase decision when making a HDB resale process and keep up with the current trends.")
 
 st.subheader("Data Sources")
-st.text("")
+st.text("QnA Resale Chatbot used the URL: https://www.hdb.gov.sg/cs/infoweb/residential/buying-a-flat/buying-procedure-for-resale-flats/overview")
+st.text("Resale Analyst used the dataset from HDB i.e. Median Resale Prices for Registered Applications by Town and Flat Type: https://data.gov.sg/datasets/d_b51323a474ba789fb4cc3db58a3116d4/view")
 
 st.subheader("Features")
 st.text("1. Q&A Chatbot about HDB Resale Processes")
