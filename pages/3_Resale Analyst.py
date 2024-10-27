@@ -4,7 +4,7 @@ import streamlit as st
 
   
 DATE_COLUMN = 'quarter'
-DATA = ".\data\MedianResalePricesforRegisteredApplicationsbyTownandFlatType.csv"
+DATA = "./data/MedianResalePricesforRegisteredApplicationsbyTownandFlatType.csv"
 
 @st.cache_data
 def load_data(nrows):
