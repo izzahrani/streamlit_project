@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
+from helper_functions.llm import get_completion, get_embedding, get_completion_by_messages, count_tokens_from_message, count_tokens
 
 try:
     _ = st.session_state.keep_graphics
@@ -37,6 +38,38 @@ df['year'] = df[DATE_COLUMN].dt.year
 
 st.subheader("Use this to generate the average median resale price, and an web analysis of the resale flat of your choice:")
 
+from langchain.agents import AgentType, initialize_agent
+from langchain_community.utilities import GoogleSerperAPIWrapper
+from langchain_core.tools import Tool
+from langchain_openai import OpenAI
+import streamlit as st
+import pandas as pd
+
+llm = OpenAI(temperature=0)
+search = GoogleSerperAPIWrapper()
+tools = [
+    Tool(
+        name="Intermediate Answer",
+        func=search.run,
+        description="useful for when you need to ask with search",
+    )
+]
+
+def _handle_error(error) -> str:
+    return str(error)[:50]
+
+self_ask_with_search = initialize_agent(
+    tools, llm, agent=AgentType.SELF_ASK_WITH_SEARCH, verbose=True, handle_parsing_errors=_handle_error
+)
+
+# Sample DataFrame
+data = {'year': [2007, 2008, 2009, 2010, 2011],
+        'town': ['Ang Mo Kio', 'Bedok', 'Bishan', 'Bukit Batok', 'Bukit Merah'],
+        'flat_type': ['1-room', '2-room', '3-room', '4-room', '5-room'],
+        'price': [100000, 150000, 200000, 250000, 300000]}
+df = pd.DataFrame(data)
+
+# Form
 with st.form("Input Parameters"):
     town = st.selectbox(
         "Which town would you like to analyse?",
@@ -58,11 +91,12 @@ with st.form("Input Parameters"):
 
     submitted = st.form_submit_button("Submit")
 
-
-# Running the Crew
-if submitted or st.session_state.keep_graphics: 
-    avg_result = df.groupby(['year','town','flat_type'])['price'].mean().reset_index()
+if submitted:
+    avg_result = df.groupby(['year', 'town', 'flat_type'])['price'].mean().reset_index()
     output = avg_result[(avg_result['town'] == town) & (avg_result['year'] == int(year)) & (avg_result['flat_type'] == flat_type)]
     st.write(output)
-    #st.markdown(result)
+
+    query = f"What is the {town} neighbourhood like in {year} in Singapore?"
+    response = self_ask_with_search.run(query)
+    st.write(response)
     st.session_state.keep_graphics = True

@@ -8,8 +8,10 @@ import tiktoken
 if load_dotenv('.env'):
    # for local development
    OPENAI_KEY = os.getenv('OPENAI_API_KEY')
+   SERPER_KEY = os.getenv('SERPER_API_KEY')
 else:
    OPENAI_KEY = st.secrets['OPENAI_API_KEY']
+   SERPER_KEY = st.secrets['SERPER_API_KEY']
 
 
 # Pass the API Key to the OpenAI Client
